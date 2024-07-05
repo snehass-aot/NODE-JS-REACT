@@ -4,8 +4,8 @@ import Search from '../components/Search/Search';
 import AddTaskModal from '../components/Modal/AddTaskModal';
 import edit from '../assets/images/edit.svg';
 import deleteIcon from '../assets/images/delete.svg';
- import EditTaskModal from '../components/Modal/editTaskModal';
- import DeleteTaskModal from '../components/Modal/DeleteTaskModal';
+import EditTaskModal from '../components/Modal/editTaskModal';
+import DeleteTaskModal from '../components/Modal/DeleteTaskModal';
 import axios from 'axios';
 
 function Index() {
@@ -15,7 +15,7 @@ function Index() {
   const [tasks, setTasks] = useState([]);
   const [activeTasks, setActiveTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
-
+  const [selectedTask, setSelectedTask] = useState(null);
 
   useEffect(() => {
     fetchTasks();
@@ -46,15 +46,29 @@ function Index() {
     }
   };
 
+  const handleEditTask = async (updatedTask) => {
+    try {
+      await axios.put(`http://localhost:3000/todos/${updatedTask.id}`, updatedTask);
+      fetchTasks(); // Fetch the updated list of tasks
+      setShowEditModal(false);
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
+
   const displayModal = () => {
     setShowModal(!showModal);
   };
-  const displayEditModal = () => {
+
+  const displayEditModal = (task) => {
+    setSelectedTask(task);
     setShowEditModal(!showEditModal);
-    };
-    const displayDeleteModal = () => {
-      setShowDeleteModal(!showDeleteModal);
-      };
+  };
+
+  const displayDeleteModal = () => {
+    setShowDeleteModal(!showDeleteModal);
+  };
+
   return (
     <div>
       <NavBar displayModal={displayModal} />
@@ -63,7 +77,7 @@ function Index() {
       <div className="task-container">
         <h3>Active Tasks</h3>
         {activeTasks.map(task => (
-          <TaskItem key={task.id} task={task} displayEditModal={displayEditModal} displayDeleteModal={displayDeleteModal}/>
+          <TaskItem key={task.id} task={task} displayEditModal={displayEditModal} displayDeleteModal={displayDeleteModal} />
         ))}
       </div>
       <div className="task-container">
@@ -72,29 +86,27 @@ function Index() {
           <TaskItem key={task.id} task={task} />
         ))}
       </div>
-     {showEditModal && <EditTaskModal />}
-     {showDeleteModal && <DeleteTaskModal />}
+      {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} />}
+      {showDeleteModal && <DeleteTaskModal />}
     </div>
   );
 }
 
-const TaskItem = ({ task,displayEditModal,displayDeleteModal }) => (
+const TaskItem = ({ task, displayEditModal, displayDeleteModal }) => (
   <div className="task-item">
     <input type='checkbox' id='checkbox' className='checkbox' />
     <div className="task-item-list">
       <div className="operationBtn">
         <p>{task.title}</p>
         <div className="icons">
-          <img src={edit} alt="" onClick={displayEditModal}/>
-          <img src={deleteIcon} alt="" onClick={displayDeleteModal}/>
+          <img src={edit} alt="" onClick={() => displayEditModal(task)} />
+          <img src={deleteIcon} alt="" onClick={displayDeleteModal} />
         </div>
       </div>
       <span>{task.description}</span>
       <span>{task.duedate}</span>
     </div>
-
   </div>
-
 );
 
 export default Index;
