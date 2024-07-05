@@ -1,0 +1,57 @@
+.SearchContainer {
+    max-width: 1312px;
+    gap: 20px;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 32px;
+    font-family: "Montserrat";
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 17.07px;
+    text-align: left;
+
+
+}
+
+.search-left {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 578px;
+    width: 100%;
+}
+
+.search-left input {
+    position: relative;
+    font-family: "Montserrat";
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    text-align: left;
+
+}
+
+.search-left img {
+    position: absolute;
+    left: 620px;
+    top: 163px;
+}
+
+.SearchContainer input {
+    display: flex;
+    max-width: 578px;
+    width: 100%;
+    padding: 10px 14px;
+    gap: 8px;
+    border-radius: 8px;
+    border: 1px;
+    border: 1px solid #CECECE;
+}
+
+.SearchContainer select {
+    max-width: 156px;
+    padding: 10px 14px;
+    gap: 10px;
+    border-radius: 5px;
+    border: 1px solid #CECECE
+}

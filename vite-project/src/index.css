@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+body {
+    max-width: 1440px;
+    padding: 32px 64px 32px 64px;
+    gap: 32px;
+    font-family: "Montserrat";
+
+
+}
+.task-container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-item {
+    max-width: 1272px;
+    border: 1px solid #D0D5DD;
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.task-item-list .operationBtn{
+    display: flex;
+    justify-content: space-between;
+}
+.task-item-list{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+.operationBtn .icons{
+    display: flex;
+    gap: 10px;
+}
+.task-item-list p {
+    font-family: "Montserrat";
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 21.94px;
+    text-align: left;
+    color: #282829;
+    margin: 0px;
+}
+
+.task-item-list span {
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: left;
+    color: #475467;
+}
+
+
+#checkbox {
+    appearance: none;
+    padding-top: 10px;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    outline: none;
+    border: #475467 1px solid;
+    margin-left: 10px;
+}
+
+#checkbox:checked {
+    background-image: url("../src/assets/images/checked.svg");
+    background-size: contain;
+    background-position: center;
+    background-repeat: none;
+
+}
