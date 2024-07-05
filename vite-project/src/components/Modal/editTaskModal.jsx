@@ -15,7 +15,7 @@ function EditTaskModal() {
         </div>
         <div className="description">
             <p>Description*</p>
-            <textarea />
+            <textarea placeholder='Add your tasks' />
         </div>
         <div className="date">
             <p>Date*</p>
