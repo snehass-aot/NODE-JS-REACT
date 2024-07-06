@@ -56,6 +56,16 @@ function Index() {
     }
   };
 
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await axios.delete(`http://localhost:3000/todos/${taskId}`);
+      fetchTasks(); // Fetch the deleted list of tasks
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  };
+
   const displayModal = () => {
     setShowModal(!showModal);
   };
@@ -65,8 +75,13 @@ function Index() {
     setShowEditModal(!showEditModal);
   };
 
-  const displayDeleteModal = () => {
+  const displayDeleteModal = (task) => {
+    setSelectedTask(task);
     setShowDeleteModal(!showDeleteModal);
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   return (
@@ -87,7 +102,7 @@ function Index() {
         ))}
       </div>
       {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} />}
-      {showDeleteModal && <DeleteTaskModal />}
+      {showDeleteModal && <DeleteTaskModal task={selectedTask} handleDeleteTask={handleDeleteTask} cancelDelete={cancelDelete} />}
     </div>
   );
 }
@@ -100,7 +115,7 @@ const TaskItem = ({ task, displayEditModal, displayDeleteModal }) => (
         <p>{task.title}</p>
         <div className="icons">
           <img src={edit} alt="" onClick={() => displayEditModal(task)} />
-          <img src={deleteIcon} alt="" onClick={displayDeleteModal} />
+          <img src={deleteIcon} alt="" onClick={() => displayDeleteModal(task)} />
         </div>
       </div>
       <span>{task.description}</span>
