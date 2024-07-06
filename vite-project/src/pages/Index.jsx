@@ -91,15 +91,24 @@ function Index() {
     setShowDeleteModal(!showDeleteModal);
   };
 
+  const cancelTask = () => {
+    setShowModal(false);
+  };
+
+  const cancelEdit = () => {
+    setShowEditModal(false);
+  };
+
+
   const cancelDelete = () => {
     setShowDeleteModal(false);
   };
 
   return (
     <div>
-      <NavBar displayModal={displayModal} />
+      <NavBar displayModal={displayModal}/>
       <Search />
-      {showModal && <AddTaskModal handleAddTask={handleAddTask} />}
+      {showModal && <AddTaskModal handleAddTask={handleAddTask}  cancelTask={cancelTask} />}
       <div className="task-container">
         <h3>Active Tasks</h3>
         {activeTasks.map(task => (
@@ -119,7 +128,7 @@ function Index() {
           displayDeleteModal={displayDeleteModal}/>
         ))}
       </div>
-      {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} />}
+      {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} cancelEdit={cancelEdit}/>}
       {showDeleteModal && <DeleteTaskModal task={selectedTask} handleDeleteTask={handleDeleteTask} cancelDelete={cancelDelete} />}
     </div>
   );

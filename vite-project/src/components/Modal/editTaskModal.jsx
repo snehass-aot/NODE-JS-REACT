@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import close from '../../assets/images/x.svg';
 import './editTaskModal.css';
 
-function EditTaskModal({ task, handleEditTask }) {
+function EditTaskModal({ task, handleEditTask,cancelEdit }) {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description);
   const [duedate, setDuedate] = useState(task.duedate);
@@ -23,7 +23,7 @@ function EditTaskModal({ task, handleEditTask }) {
     <div className='modal'>
       <div className="head">
         <p>Edit Task</p>
-        <img src={close} alt="close" />
+        <img src={close} alt="close" onClick={cancelEdit}/>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="title">
@@ -51,7 +51,7 @@ function EditTaskModal({ task, handleEditTask }) {
           />
         </div>
         <div className="modalButton">
-          <button type="button" className='cancel'>Cancel</button>
+          <button type="button" className='cancel' onClick={cancelEdit}>Cancel</button>
           <button type="submit" className='update'>Update</button>
         </div>
       </form>

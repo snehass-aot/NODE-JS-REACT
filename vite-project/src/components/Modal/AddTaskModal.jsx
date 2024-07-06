@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import close from '../../assets/images/x.svg';
 import './AddTaskModal.css';
 
-function AddTaskModal({ handleAddTask }) {
+function AddTaskModal({ handleAddTask,cancelTask }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [duedate, setDuedate] = useState("");
@@ -17,7 +17,7 @@ function AddTaskModal({ handleAddTask }) {
     <div className='modal'>
       <div className="head">
         <p>Add Task</p>
-        <img src={close} alt="close" />
+        <img src={close} alt="close" onClick={cancelTask}/>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="title">
@@ -46,7 +46,7 @@ function AddTaskModal({ handleAddTask }) {
           />
         </div>
         <div className="modalButton">
-          <button type="button" className='cancel'>Cancel</button>
+          <button type="button" className='cancel' onClick={cancelTask}>Cancel</button>
           <button type="submit" className='Add'>Add Task</button>
         </div>
       </form>
