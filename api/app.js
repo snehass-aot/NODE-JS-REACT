@@ -43,7 +43,7 @@ app.post('/todos', (req, res) => {
 
 app.put('/todos/:id', (req, res) => {
     const id = req.params.id;
-    const { title, description, duedate } = req.body;
+    const { title, description, duedate, status } = req.body; // Add 'status' here
     const task = list.find((task) => task.id == id);
     if (!task) {
         return res.status(400).json({ message: 'Task not exists' });
@@ -51,8 +51,10 @@ app.put('/todos/:id', (req, res) => {
     task.title = title;
     task.description = description;
     task.duedate = duedate;
+    task.status = status; // Update the status
     res.json(task);
 });
+
 
 app.delete('/todos/:id', (req, res) => {
     const id = req.params.id;

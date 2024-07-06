@@ -66,6 +66,17 @@ function Index() {
     }
   };
 
+  const handleStatusChange = async (task) => {
+    try {
+      const updatedTask = { ...task, status: !task.status };
+      console.log('Updating task:', updatedTask); // Debug log
+      await axios.put(`http://localhost:3000/todos/${updatedTask.id}`, updatedTask);
+      fetchTasks(); // Fetch the updated list of tasks
+    } catch (error) {
+      console.error('Error updating task status:', error);
+    }
+  };
+
   const displayModal = () => {
     setShowModal(!showModal);
   };
@@ -92,13 +103,20 @@ function Index() {
       <div className="task-container">
         <h3>Active Tasks</h3>
         {activeTasks.map(task => (
-          <TaskItem key={task.id} task={task} displayEditModal={displayEditModal} displayDeleteModal={displayDeleteModal} />
+          <TaskItem
+            key={task.id}
+            task={task}
+            displayEditModal={displayEditModal}
+            displayDeleteModal={displayDeleteModal}
+            handleStatusChange={handleStatusChange}
+          />
         ))}
       </div>
       <div className="task-container">
         <h3>Completed Tasks</h3>
         {completedTasks.map(task => (
-          <TaskItem key={task.id} task={task} />
+          <TaskItem key={task.id} task={task} handleStatusChange={handleStatusChange} displayEditModal={displayEditModal}
+          displayDeleteModal={displayDeleteModal}/>
         ))}
       </div>
       {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} />}
@@ -107,15 +125,21 @@ function Index() {
   );
 }
 
-const TaskItem = ({ task, displayEditModal, displayDeleteModal }) => (
+const TaskItem = ({ task, displayEditModal, displayDeleteModal, handleStatusChange }) => (
   <div className="task-item">
-    <input type='checkbox' id='checkbox' className='checkbox' />
+    <input
+      type='checkbox'
+      id='checkbox'
+      className='checkbox'
+      checked={!task.status}
+      onChange={() => handleStatusChange(task)}
+    />
     <div className="task-item-list">
       <div className="operationBtn">
         <p>{task.title}</p>
         <div className="icons">
-          <img src={edit} alt="" onClick={() => displayEditModal(task)} />
-          <img src={deleteIcon} alt="" onClick={() => displayDeleteModal(task)} />
+          {displayEditModal && <img src={edit} alt="" onClick={() => displayEditModal(task)} />}
+          {displayDeleteModal && <img src={deleteIcon} alt="" onClick={() => displayDeleteModal(task)} />}
         </div>
       </div>
       <span>{task.description}</span>
