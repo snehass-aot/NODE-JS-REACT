@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import close from '../../assets/images/x.svg';
-import './AddTaskModal.css';
 
-function AddTaskModal({ handleAddTask,cancelTask }) {
+function AddTaskModal({ handleAddTask, cancelTask }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [duedate, setDuedate] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newTask = { title, description, duedate, status: true };
+    const timestamp = Date.now(); // Generate a timestamp for the task
+    const newTask = { title, description, duedate, status: true, timestamp };
     handleAddTask(newTask);
   };
 

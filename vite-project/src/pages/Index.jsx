@@ -16,45 +16,32 @@ function Index() {
   const [activeTasks, setActiveTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOption, setSortOption] = useState('newest');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("newest");
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  useEffect(() => {
-    filterAndSortTasks();
-  }, [tasks, searchQuery, sortOption]);
-
   const fetchTasks = async () => {
     try {
       const response = await axios.get('http://localhost:3000/todos');
-      setTasks(response.data);
+      const tasks = response.data;
+      setTasks(tasks);
+      setActiveTasks(tasks.filter(task => task.status));
+      setCompletedTasks(tasks.filter(task => !task.status));
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
   };
 
-  const filterAndSortTasks = () => {
-    let filteredTasks = tasks.filter(task => 
-      task.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    if (sortOption === 'newest') {
-      filteredTasks = filteredTasks.sort((a, b) => new Date(b.duedate) - new Date(a.duedate));
-    } else if (sortOption === 'oldest') {
-      filteredTasks = filteredTasks.sort((a, b) => new Date(a.duedate) - new Date(b.duedate));
-    }
-
-    setActiveTasks(filteredTasks.filter(task => task.status));
-    setCompletedTasks(filteredTasks.filter(task => !task.status));
-  };
-
   const handleAddTask = async (newTask) => {
     try {
       const response = await axios.post('http://localhost:3000/todos', newTask);
-      setTasks(response.data);
+      const updatedTasks = response.data;
+      setTasks(updatedTasks);
+      setActiveTasks(updatedTasks.filter(task => task.status));
+      setCompletedTasks(updatedTasks.filter(task => !task.status));
       setShowModal(false);
     } catch (error) {
       console.error('Error adding task:', error);
@@ -64,7 +51,7 @@ function Index() {
   const handleEditTask = async (updatedTask) => {
     try {
       await axios.put(`http://localhost:3000/todos/${updatedTask.id}`, updatedTask);
-      fetchTasks();
+      fetchTasks(); // Fetch the updated list of tasks
       setShowEditModal(false);
     } catch (error) {
       console.error('Error updating task:', error);
@@ -74,7 +61,7 @@ function Index() {
   const handleDeleteTask = async (taskId) => {
     try {
       await axios.delete(`http://localhost:3000/todos/${taskId}`);
-      fetchTasks();
+      fetchTasks(); // Fetch the deleted list of tasks
       setShowDeleteModal(false);
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -84,8 +71,9 @@ function Index() {
   const handleStatusChange = async (task) => {
     try {
       const updatedTask = { ...task, status: !task.status };
+      console.log('Updating task:', updatedTask); // Debug log
       await axios.put(`http://localhost:3000/todos/${updatedTask.id}`, updatedTask);
-      fetchTasks();
+      fetchTasks(); // Fetch the updated list of tasks
     } catch (error) {
       console.error('Error updating task status:', error);
     }
@@ -117,14 +105,39 @@ function Index() {
     setShowDeleteModal(false);
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSortChange = (e) => {
+    setSortOption(e.target.value);
+  };
+
+  const filterAndSortTasks = (tasks, searchTerm, sortOption) => {
+    let filteredTasks = tasks.filter(task =>
+      task.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (sortOption === 'newest') {
+      filteredTasks = filteredTasks.sort((a, b) => b.timestamp - a.timestamp);
+    } else if (sortOption === 'oldest') {
+      filteredTasks = filteredTasks.sort((a, b) => a.timestamp - b.timestamp);
+    }
+
+    return filteredTasks;
+  };
+
+  const sortedActiveTasks = filterAndSortTasks(activeTasks, searchTerm, sortOption);
+  const sortedCompletedTasks = filterAndSortTasks(completedTasks, searchTerm, sortOption);
+
   return (
     <div>
-      <NavBar displayModal={displayModal} />
-      <Search setSearchQuery={setSearchQuery} setSortOption={setSortOption} />
+      <NavBar displayModal={displayModal}/>
+      <Search handleSearch={handleSearch} handleSortChange={handleSortChange} />
       {showModal && <AddTaskModal handleAddTask={handleAddTask} cancelTask={cancelTask} />}
       <div className="task-container">
         <h3>Active Tasks</h3>
-        {activeTasks.map(task => (
+        {sortedActiveTasks.map(task => (
           <TaskItem
             key={task.id}
             task={task}
@@ -136,7 +149,7 @@ function Index() {
       </div>
       <div className="task-container">
         <h3>Completed Tasks</h3>
-        {completedTasks.map(task => (
+        {sortedCompletedTasks.map(task => (
           <TaskItem
             key={task.id}
             task={task}
@@ -146,7 +159,7 @@ function Index() {
           />
         ))}
       </div>
-      {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} cancelEdit={cancelEdit} />}
+      {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} cancelEdit={cancelEdit}/>}
       {showDeleteModal && <DeleteTaskModal task={selectedTask} handleDeleteTask={handleDeleteTask} cancelDelete={cancelDelete} />}
     </div>
   );
@@ -165,8 +178,8 @@ const TaskItem = ({ task, displayEditModal, displayDeleteModal, handleStatusChan
       <div className="operationBtn">
         <p>{task.title}</p>
         <div className="icons">
-          {displayEditModal && <img src={edit} alt="" onClick={() => displayEditModal(task)} />}
-          {displayDeleteModal && <img src={deleteIcon} alt="" onClick={() => displayDeleteModal(task)} />}
+          {displayEditModal && <img src={edit} alt="edit" onClick={() => displayEditModal(task)} />}
+          {displayDeleteModal && <img src={deleteIcon} alt="delete" onClick={() => displayDeleteModal(task)} />}
         </div>
       </div>
       <span>{task.description}</span>

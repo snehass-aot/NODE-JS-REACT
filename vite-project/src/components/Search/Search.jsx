@@ -2,25 +2,11 @@ import React from 'react';
 import search from '../../assets/images/search.svg';
 import '../Search/Search.css';
 
-function Search({ setSearchQuery, setSortOption }) {
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleSortChange = (e) => {
-    setSortOption(e.target.value);
-  };
-
+function Search({ handleSearch, handleSortChange }) {
   return (
     <div className='SearchContainer'>
       <div className="search-left">
-        <input
-          type='text'
-          name='search'
-          id='search'
-          placeholder='search by task name'
-          onChange={handleSearchChange}
-        />
+        <input type='text' name='search' id='search' placeholder='search by task name' onChange={handleSearch} />
         <img src={search} alt="search" />
       </div>
       <div>

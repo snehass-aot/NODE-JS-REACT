@@ -29,17 +29,15 @@ app.get('/todos/:id', (req, res) => {
 app.post('/todos', (req, res) => {
     const { title, description, duedate } = req.body;
     const id = uuidv4(); // generate a unique ID
-    const taskExists = list.find(task => task.id === id);
-    if (taskExists) {
-        return res.status(400).json({ message: 'Task with this ID already exists' });
-    }
     if (!title || !description || !duedate) {
         return res.status(400).json({ message: 'Please fill all the fields' });
     }
-    const newTask = { id, title, description, duedate, status: true };
+    const timestamp = Date.now(); // Generate a timestamp for the task
+    const newTask = { id, title, description, duedate, status: true, timestamp };
     list.push(newTask);
     res.json(list);
 });
+
 
 app.put('/todos/:id', (req, res) => {
     const id = req.params.id;
