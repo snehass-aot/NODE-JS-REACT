@@ -16,30 +16,45 @@ function Index() {
   const [activeTasks, setActiveTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOption, setSortOption] = useState('newest');
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
+  useEffect(() => {
+    filterAndSortTasks();
+  }, [tasks, searchQuery, sortOption]);
+
   const fetchTasks = async () => {
     try {
       const response = await axios.get('http://localhost:3000/todos');
-      const tasks = response.data;
-      setTasks(tasks);
-      setActiveTasks(tasks.filter(task => task.status));
-      setCompletedTasks(tasks.filter(task => !task.status));
+      setTasks(response.data);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
   };
 
+  const filterAndSortTasks = () => {
+    let filteredTasks = tasks.filter(task => 
+      task.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (sortOption === 'newest') {
+      filteredTasks = filteredTasks.sort((a, b) => new Date(b.duedate) - new Date(a.duedate));
+    } else if (sortOption === 'oldest') {
+      filteredTasks = filteredTasks.sort((a, b) => new Date(a.duedate) - new Date(b.duedate));
+    }
+
+    setActiveTasks(filteredTasks.filter(task => task.status));
+    setCompletedTasks(filteredTasks.filter(task => !task.status));
+  };
+
   const handleAddTask = async (newTask) => {
     try {
       const response = await axios.post('http://localhost:3000/todos', newTask);
-      const updatedTasks = response.data;
-      setTasks(updatedTasks);
-      setActiveTasks(updatedTasks.filter(task => task.status));
-      setCompletedTasks(updatedTasks.filter(task => !task.status));
+      setTasks(response.data);
       setShowModal(false);
     } catch (error) {
       console.error('Error adding task:', error);
@@ -49,7 +64,7 @@ function Index() {
   const handleEditTask = async (updatedTask) => {
     try {
       await axios.put(`http://localhost:3000/todos/${updatedTask.id}`, updatedTask);
-      fetchTasks(); // Fetch the updated list of tasks
+      fetchTasks();
       setShowEditModal(false);
     } catch (error) {
       console.error('Error updating task:', error);
@@ -59,7 +74,7 @@ function Index() {
   const handleDeleteTask = async (taskId) => {
     try {
       await axios.delete(`http://localhost:3000/todos/${taskId}`);
-      fetchTasks(); // Fetch the deleted list of tasks
+      fetchTasks();
       setShowDeleteModal(false);
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -69,9 +84,8 @@ function Index() {
   const handleStatusChange = async (task) => {
     try {
       const updatedTask = { ...task, status: !task.status };
-      console.log('Updating task:', updatedTask); // Debug log
       await axios.put(`http://localhost:3000/todos/${updatedTask.id}`, updatedTask);
-      fetchTasks(); // Fetch the updated list of tasks
+      fetchTasks();
     } catch (error) {
       console.error('Error updating task status:', error);
     }
@@ -99,16 +113,15 @@ function Index() {
     setShowEditModal(false);
   };
 
-
   const cancelDelete = () => {
     setShowDeleteModal(false);
   };
 
   return (
     <div>
-      <NavBar displayModal={displayModal}/>
-      <Search />
-      {showModal && <AddTaskModal handleAddTask={handleAddTask}  cancelTask={cancelTask} />}
+      <NavBar displayModal={displayModal} />
+      <Search setSearchQuery={setSearchQuery} setSortOption={setSortOption} />
+      {showModal && <AddTaskModal handleAddTask={handleAddTask} cancelTask={cancelTask} />}
       <div className="task-container">
         <h3>Active Tasks</h3>
         {activeTasks.map(task => (
@@ -124,11 +137,16 @@ function Index() {
       <div className="task-container">
         <h3>Completed Tasks</h3>
         {completedTasks.map(task => (
-          <TaskItem key={task.id} task={task} handleStatusChange={handleStatusChange} displayEditModal={displayEditModal}
-          displayDeleteModal={displayDeleteModal}/>
+          <TaskItem
+            key={task.id}
+            task={task}
+            displayEditModal={displayEditModal}
+            displayDeleteModal={displayDeleteModal}
+            handleStatusChange={handleStatusChange}
+          />
         ))}
       </div>
-      {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} cancelEdit={cancelEdit}/>}
+      {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} cancelEdit={cancelEdit} />}
       {showDeleteModal && <DeleteTaskModal task={selectedTask} handleDeleteTask={handleDeleteTask} cancelDelete={cancelDelete} />}
     </div>
   );
