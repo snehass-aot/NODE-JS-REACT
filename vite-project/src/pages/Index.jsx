@@ -61,17 +61,26 @@ function Index() {
   const handleDeleteTask = async (taskId) => {
     try {
       await axios.delete(`http://localhost:3000/todos/${taskId}`);
-      fetchTasks(); // Fetch the deleted list of tasks
+      fetchTasks(); // Fetch the updated list of tasks
       setShowDeleteModal(false);
     } catch (error) {
       console.error('Error deleting task:', error);
     }
   };
 
+  const handleClearCompletedTasks = async () => {
+    try {
+      const completedTaskIds = completedTasks.map(task => task.id);
+      await Promise.all(completedTaskIds.map(id => axios.delete(`http://localhost:3000/todos/${id}`)));
+      fetchTasks(); // Fetch the updated list of tasks
+    } catch (error) {
+      console.error('Error clearing completed tasks:', error);
+    }
+  };
+
   const handleStatusChange = async (task) => {
     try {
       const updatedTask = { ...task, status: !task.status };
-      console.log('Updating task:', updatedTask); // Debug log
       await axios.put(`http://localhost:3000/todos/${updatedTask.id}`, updatedTask);
       fetchTasks(); // Fetch the updated list of tasks
     } catch (error) {
@@ -132,7 +141,7 @@ function Index() {
 
   return (
     <div>
-      <NavBar displayModal={displayModal}/>
+      <NavBar displayModal={displayModal} />
       <Search handleSearch={handleSearch} handleSortChange={handleSortChange} />
       {showModal && <AddTaskModal handleAddTask={handleAddTask} cancelTask={cancelTask} />}
       <div className="task-container">
@@ -148,7 +157,10 @@ function Index() {
         ))}
       </div>
       <div className="task-container">
-        <h3>Completed Tasks</h3>
+        <div className="completedTask">
+          <h3>Completed Tasks</h3>
+          <button onClick={handleClearCompletedTasks}>Clear Completed Tasks</button>
+        </div>
         {sortedCompletedTasks.map(task => (
           <TaskItem
             key={task.id}
@@ -159,7 +171,7 @@ function Index() {
           />
         ))}
       </div>
-      {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} cancelEdit={cancelEdit}/>}
+      {showEditModal && <EditTaskModal task={selectedTask} handleEditTask={handleEditTask} cancelEdit={cancelEdit} />}
       {showDeleteModal && <DeleteTaskModal task={selectedTask} handleDeleteTask={handleDeleteTask} cancelDelete={cancelDelete} />}
     </div>
   );
