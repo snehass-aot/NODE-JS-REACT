@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar/NavBar';
 import Search from '../components/Search/Search';
 import AddTaskModal from '../components/Modal/AddTaskModal';
-import edit from '../assets/images/edit.svg';
-import deleteIcon from '../assets/images/delete.svg';
 import EditTaskModal from '../components/Modal/editTaskModal';
 import DeleteTaskModal from '../components/Modal/DeleteTaskModal';
 import axios from 'axios';
+import yellow from '../assets/images/yellow.svg';
+import green from '../assets/images/green.svg';
+import calendar from '../assets/images/calender.svg';
+
+import edit from '../assets/images/edit.svg';
+import deleteIcon from '../assets/images/delete.svg';
 
 function Index() {
   const [showModal, setShowModal] = useState(false);
@@ -38,10 +42,7 @@ function Index() {
   const handleAddTask = async (newTask) => {
     try {
       const response = await axios.post('http://localhost:3000/todos', newTask);
-      const updatedTasks = response.data;
-      setTasks(updatedTasks);
-      setActiveTasks(updatedTasks.filter(task => task.status));
-      setCompletedTasks(updatedTasks.filter(task => !task.status));
+      fetchTasks();
       setShowModal(false);
     } catch (error) {
       console.error('Error adding task:', error);
@@ -51,7 +52,7 @@ function Index() {
   const handleEditTask = async (updatedTask) => {
     try {
       await axios.put(`http://localhost:3000/todos/${updatedTask.id}`, updatedTask);
-      fetchTasks(); // Fetch the updated list of tasks
+      fetchTasks();
       setShowEditModal(false);
     } catch (error) {
       console.error('Error updating task:', error);
@@ -61,7 +62,7 @@ function Index() {
   const handleDeleteTask = async (taskId) => {
     try {
       await axios.delete(`http://localhost:3000/todos/${taskId}`);
-      fetchTasks(); // Fetch the updated list of tasks
+      fetchTasks();
       setShowDeleteModal(false);
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -70,20 +71,18 @@ function Index() {
 
   const handleClearCompletedTasks = async () => {
     try {
-        await axios.delete('http://localhost:3000/todos/completed');
-        fetchTasks(); // Fetch the updated list of tasks
+      await axios.delete('http://localhost:3000/todos/completed');
+      fetchTasks();
     } catch (error) {
-        console.error('Error clearing completed tasks:', error.response); // Log the error response
+      console.error('Error clearing completed tasks:', error.response);
     }
-};
-
-
+  };
 
   const handleStatusChange = async (task) => {
     try {
       const updatedTask = { ...task, status: !task.status };
       await axios.put(`http://localhost:3000/todos/${updatedTask.id}`, updatedTask);
-      fetchTasks(); // Fetch the updated list of tasks
+      fetchTasks();
     } catch (error) {
       console.error('Error updating task status:', error);
     }
@@ -95,12 +94,12 @@ function Index() {
 
   const displayEditModal = (task) => {
     setSelectedTask(task);
-    setShowEditModal(!showEditModal);
+    setShowEditModal(true);
   };
 
   const displayDeleteModal = (task) => {
     setSelectedTask(task);
-    setShowDeleteModal(!showDeleteModal);
+    setShowDeleteModal(true);
   };
 
   const cancelTask = () => {
@@ -178,27 +177,42 @@ function Index() {
   );
 }
 
-const TaskItem = ({ task, displayEditModal, displayDeleteModal, handleStatusChange }) => (
-  <div className="task-item">
-    <input
-      type='checkbox'
-      id='checkbox'
-      className='checkbox'
-      checked={!task.status}
-      onChange={() => handleStatusChange(task)}
-    />
-    <div className="task-item-list">
-      <div className="operationBtn">
-        <p>{task.title}</p>
-        <div className="icons">
-          {displayEditModal && <img src={edit} alt="edit" onClick={() => displayEditModal(task)} />}
-          {displayDeleteModal && <img src={deleteIcon} alt="delete" onClick={() => displayDeleteModal(task)} />}
+const isDueDateOver = (dueDate) => {
+  const currentDate = new Date();
+  // const taskDueDate = new Date(dueDate);
+  return new Date(dueDate) < currentDate;
+};
+
+const TaskItem = ({ task, displayEditModal, displayDeleteModal, handleStatusChange }) => {
+  // const dueDateClass = isDueDateOver(task.duedate) ? 'due-date-over' : '';
+
+  return (
+    <div className="task-item">
+      <input
+        type='checkbox'
+        id='checkbox'
+        className='checkbox'
+        checked={!task.status}
+        onChange={() => handleStatusChange(task)}
+      />
+      <div className="task-item-list">
+        <div className="operationBtn">
+          <div className="headerContainer">
+            <p>{task.title}</p>
+            {task.status ?
+              (<img src={yellow} alt="yellow-dot" />) : (<img src={green} alt="green-dot" />)
+            }
+          </div>
+          <div className="icons">
+            <img src={edit} alt="edit" onClick={() => displayEditModal(task)} />
+            <img src={deleteIcon} alt="delete" onClick={() => displayDeleteModal(task)} />
+          </div>
         </div>
+        <span>{task.description}</span>
+        <span className={isDueDateOver(task.duedate) ? 'due-date-over' : ''}><img src={calendar} alt="" /> by {task.duedate}</span>
       </div>
-      <span>{task.description}</span>
-      <span>{task.duedate}</span>
     </div>
-  </div>
-);
+  );
+};
 
 export default Index;

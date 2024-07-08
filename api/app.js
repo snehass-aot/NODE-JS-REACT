@@ -18,13 +18,20 @@ app.get('/todos', (req, res) => {
 });
 
 app.post('/todos', (req, res) => {
-    const { title, description, duedate } = req.body;
+    const {timestamp, title, description, duedate } = req.body;
     const id = uuidv4(); // generate a unique ID
     if (!title || !description || !duedate) {
         return res.status(400).json({ message: 'Please fill all the fields' });
     }
-    const timestamp = Date.now(); // Generate a timestamp for the task
-    const newTask = { id, title, description, duedate, status: true, timestamp };
+    // const timestamp = Date.now(); // Generate a timestamp for the task
+    const newTask = {
+        id,
+        title,
+        description,
+        duedate,
+        status: true,
+        timestamp
+    };
     list.push(newTask);
     res.json(list);
 });
@@ -46,9 +53,9 @@ app.put('/todos/:id', (req, res) => {
 
 // New endpoint to clear completed tasks
 app.delete('/todos/completed', (req, res) => {
-    console.log('Received DELETE request to clear completed tasks:', req.body); // Log request body
+    console.log(req.body);
     list = list.filter(task => task.status); // Ensure correct filtering
-    console.log('Remaining tasks after filtering:', list); // Log filtered list
+    console.log(list); // Log filtered list
     res.json(list);
 });
 

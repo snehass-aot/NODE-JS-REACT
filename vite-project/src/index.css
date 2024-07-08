@@ -19,12 +19,17 @@ body {
 .completedTask {
     display: flex;
     justify-content: space-between;
+    max-width: 1312px;
+    margin-top: 32px;
 }
 
 .completedTask button {
     max-width: 205px;
-    padding: 10px 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
     gap: 8px;
+    background-color: #fff;
     border-radius: 5px;
     border: 1px solid #0C39C7;
     color: #0C39C7;
@@ -58,7 +63,11 @@ body {
     gap: 12px;
     width: 100%;
 }
-
+.headerContainer{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
 .operationBtn .icons {
     display: flex;
     gap: 10px;
@@ -100,5 +109,21 @@ body {
     background-size: contain;
     background-position: center;
     background-repeat: none;
-
+    border: none;
 }
+.calendar{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.calendar img{
+    max-width: 14px;
+}
+
+.task-item-list .due-date-over {
+    background: #C035030F;
+    color: #C03503;
+
+
+  }
+  
