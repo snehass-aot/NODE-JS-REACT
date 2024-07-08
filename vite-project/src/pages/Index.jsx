@@ -179,12 +179,10 @@ function Index() {
 
 const isDueDateOver = (dueDate) => {
   const currentDate = new Date();
-  // const taskDueDate = new Date(dueDate);
   return new Date(dueDate) < currentDate;
 };
 
 const TaskItem = ({ task, displayEditModal, displayDeleteModal, handleStatusChange }) => {
-  // const dueDateClass = isDueDateOver(task.duedate) ? 'due-date-over' : '';
 
   return (
     <div className="task-item">

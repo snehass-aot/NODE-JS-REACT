@@ -123,7 +123,10 @@ body {
 .task-item-list .due-date-over {
     background: #C035030F;
     color: #C03503;
-
-
+    max-width: 148px;
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    gap: 4px;
   }
   
