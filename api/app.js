@@ -17,15 +17,6 @@ app.get('/todos', (req, res) => {
     res.json(list);
 });
 
-app.get('/todos/:id', (req, res) => {
-    const id = req.params.id;
-    const task = list.find((task) => task.id == id);
-    if (!task) {
-        return res.status(400).json({ message: 'Task not exists' });
-    }
-    res.json(task);
-});
-
 app.post('/todos', (req, res) => {
     const { title, description, duedate } = req.body;
     const id = uuidv4(); // generate a unique ID
@@ -37,7 +28,6 @@ app.post('/todos', (req, res) => {
     list.push(newTask);
     res.json(list);
 });
-
 
 app.put('/todos/:id', (req, res) => {
     const id = req.params.id;
@@ -54,6 +44,16 @@ app.put('/todos/:id', (req, res) => {
 });
 
 
+// New endpoint to clear completed tasks
+app.delete('/todos/completed', (req, res) => {
+    console.log('Received DELETE request to clear completed tasks:', req.body); // Log request body
+    list = list.filter(task => task.status); // Ensure correct filtering
+    console.log('Remaining tasks after filtering:', list); // Log filtered list
+    res.json(list);
+});
+
+
+
 app.delete('/todos/:id', (req, res) => {
     const id = req.params.id;
     const taskIndex = list.findIndex(task => task.id == id);
@@ -63,6 +63,9 @@ app.delete('/todos/:id', (req, res) => {
     list = list.filter((task) => task.id != id);
     res.json(list);
 });
+
+
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

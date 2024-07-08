@@ -70,13 +70,14 @@ function Index() {
 
   const handleClearCompletedTasks = async () => {
     try {
-      const completedTaskIds = completedTasks.map(task => task.id);
-      await Promise.all(completedTaskIds.map(id => axios.delete(`http://localhost:3000/todos/${id}`)));
-      fetchTasks(); // Fetch the updated list of tasks
+        await axios.delete('http://localhost:3000/todos/completed');
+        fetchTasks(); // Fetch the updated list of tasks
     } catch (error) {
-      console.error('Error clearing completed tasks:', error);
+        console.error('Error clearing completed tasks:', error.response); // Log the error response
     }
-  };
+};
+
+
 
   const handleStatusChange = async (task) => {
     try {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import close from '../../assets/images/x.svg';
+import './AddTaskModal.css';
 
 function AddTaskModal({ handleAddTask, cancelTask }) {
   const [title, setTitle] = useState("");
