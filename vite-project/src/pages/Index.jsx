@@ -183,6 +183,7 @@ const isDueDateOver = (dueDate) => {
 };
 
 const TaskItem = ({ task, displayEditModal, displayDeleteModal, handleStatusChange }) => {
+  // const dueDateClass = isDueDateOver(task.duedate) ? 'due-date-over' : '';
 
   return (
     <div className="task-item">
